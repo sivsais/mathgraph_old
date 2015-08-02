@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="./ChangerTest.css">
+    <title></title>
+    <script type="text/javascript" src="../static/js/jquery-2.0.2.min.js"></script>
+    <script src="../static/js/MathGraph/00.%20Utils/Changer.js"></script>
+    <script>
+        $(function () {
+            $("*").attr('unselectable','on').css('MozUserSelect','none');
+            $('*').css({
+                '-moz-user-select': 'none',
+                '-khtml-user-select': 'none',
+                '-webkit-user-select': 'none',
+                'unselectable': 'on',
+                'cursor': 'default'
+            });
+            var chngr = new Changer($('#cntr'), $('#dspl'), {})
+            chngr.onChange = function (new_val) {
+                console.log(new_val);
+            }
+        })
+    </script>
+</head>
+<body>
+<div id="dspl"></div>
+<div id="cntr"></div>
+</body>
+</html>

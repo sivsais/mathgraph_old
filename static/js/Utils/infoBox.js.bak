@@ -1,0 +1,547 @@
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+function toFixedWithoutZeros(x) {
+    var s = x.toFixed(3);
+    if (s.indexOf('.') == -1) {
+        return s;
+    }
+    for (var j = s.length - 1; j >= 0; j--) {
+        if (s[j] == '.') {
+            s = s.slice(0, j);
+            break;
+        }
+        if (s[j] != '0') {
+            s = s.slice(0, j + 1);
+            break;
+        }
+    }
+    return s;
+}
+
+function infoPanel(offset, $container, $parent, id, object, fields, z) {
+    var $table = $('<table/>', {
+        id: 'tb'//,
+        //'tabIndex': '0'
+    });
+    $table.css({
+//        'position': 'absolute',
+        'display': 'none'
+    });
+    if (typeof(z) !== 'undefined') {
+        $table.css('z-index', z);
+    }
+    $table.addClass('infoPanel');
+    $table.appendTo($container);
+    $table.offset(offset);
+
+    function toFields(a, params) {
+        var result = [];
+        for (var i in a) {
+            if (!a.hasOwnProperty(i)) {
+                continue;
+            }
+            var cell = {
+                name: undefined,
+                key: undefined,
+                editable: undefined,
+                slider: undefined,
+                min: undefined,
+                max: undefined,
+                step: undefined,
+                inadmissible: undefined
+            };
+            for (var j in params) {
+                if (!params.hasOwnProperty(j)) {
+                    continue;
+                }
+                cell[j] = params[j];
+            }
+            cell.key = i;
+            result.push(cell);
+        }
+        return result;
+    }
+
+    var $children = undefined;
+    this.__defineGetter__('$children', function () {
+        return $children;
+    });
+    this.__defineGetter__('$parent', function() {
+        return $parent;
+    });
+
+    var childIndex = 0;
+//    var _me = this;
+//    $table.focus(function () {
+//        _me.fadeTo(500, 1);
+//    });
+//    $table.blur(function () {
+//        _me.fadeTo(500, 0.5);
+//    });
+
+    $table.show(0);
+
+    for (var i in fields) {
+        if (!fields.hasOwnProperty(i)) {
+            continue;
+        }
+        var ftype = '';
+        if (typeof(object[fields[i].key]) === 'number') {
+            ftype = 'Number';
+        } else if (typeof(object[fields[i].key]) === 'string') {
+            ftype = 'String';
+        } else if (object[fields[i].key] instanceof Point) {
+            ftype = 'Point';
+        } else if (object[fields[i].key] instanceof Array) {
+            ftype = 'Array';
+        } else {
+            continue;
+        }
+        var $field = $('<tr/>', {
+            'class': 'field'
+        });
+        $field.addClass(ftype);
+        if (fields[i].editable) {
+            $field.addClass('editable');
+        }
+        $field.appendTo($table);
+
+        var $key = $('<td/>', {
+            'class': 'key'
+        });
+        $key.appendTo($field);
+
+        var $value = $('<td/>', {
+            'class': 'value'
+        });
+        $value.appendTo($field);
+
+        var $interactive = $('<td/>', {
+            'id': id + '_interactive_' + fields[i].key,
+            'class': 'interactive'
+        });
+        $interactive.appendTo($field);
+
+        $key.val(fields[i].key);
+        $key.text($key.val());
+        $value.attr('_key', $key.val());
+
+        if (ftype == 'String' || ftype == 'Number') {
+            if (ftype == 'String') {
+                $value.attr('maxLength', fields[i].max);
+                if (typeof(fields[i].inadmissible) !== 'undefined') {
+                    $value.attr('inadmissible', fields[i].inadmissible);
+                } else {
+                    $value.attr('inadmissible', '');
+                }
+            } else {
+                if (typeof(fields[i].max) !== 'undefined') {
+                    $value.attr('maxValue', fields[i].max);
+                } else {
+                    $value.attr('maxValue', Infinity);
+                }
+                if (typeof(fields[i].min) !== 'undefined') {
+                    $value.attr('minValue', fields[i].min);
+                } else {
+                    $value.attr('minValue', -Infinity);
+                }
+                if (typeof(fields[i].step) !== 'undefined') {
+                    $value.attr('step', fields[i].step);
+                } else {
+                    $value.attr('step', 0.01);
+                }
+            }
+            var s = object[fields[i].key];
+            if (ftype == 'Number') {
+                s = toFixedWithoutZeros(s, 3);
+            }
+            $value
+                .val(s)
+                .text($value.val());
+        }
+        if (ftype == 'Point' || ftype == 'Array') {
+            $value
+                .val(ftype)
+                .text($value.val());
+        }
+        if (ftype == 'String' && fields[i].editable) {
+            $value.dblclick(function () {
+                var $value = $(this);
+                var $input = $('<input/>', {
+                    'type': 'text',
+                    'value': $value.val(),
+                    'maxLength': $value.attr('maxLength'),
+                    'class': 'editVal'
+                });
+                $input.css({
+                    'position': 'absolute'
+                });
+                $input.width($value.width());
+                $input.height($value.height());
+                $input.offset($value.offset());
+                $input.appendTo($container);
+                $input.focus();
+
+                $input
+                    .keydown(function(e) {
+                        if (e.which == 27) {
+                            $input.remove();
+                        }
+                        if (e.which == 13) {
+                            $value.val($input.val());
+                            $value.text($value.val());
+                            object[$value.attr('_key')] = $value.val();
+                            $input.remove();
+                        }
+                        var stopList = $value.attr('inadmissible');
+                        if (stopList.indexOf(String.fromCharCode(e.which)) != -1) {
+                            return false;
+                        }
+                    })
+                    .blur(function (e) {
+                        $value.val($input.val());
+                        $value.text($value.val());
+                        object[$value.attr('_key')] = $value.val();
+                        $input.remove();
+                    });
+            });
+            $value.attr('colspan', '2');
+            $interactive.remove();
+        }
+
+        if (ftype == 'Number') {
+            if (fields[i].editable) {
+                $value.dblclick(function () {
+                    var $value = $(this);
+                    var $input = $('<input/>', {
+                        'type': 'text',
+                        'value': $value.val(),
+                        'class': 'editVal'
+                    });
+                    $input.css({
+                        'position': 'absolute'
+                    });
+                    $input.width($value.width());
+                    $input.height($value.height());
+                    $input.appendTo($value);
+                    $input.offset($value.offset());
+                    $input.focus();
+
+                    $input
+                        .keydown(function(e) {
+                            if (e.which == 27) {
+                                $input.remove();
+                            }
+                            if (e.which == 13) {
+                                var v = parseFloat($(this).val());
+                                var max = parseFloat($value.attr('maxValue'));
+                                var min = parseFloat($value.attr('minValue'));
+                                var step = parseFloat($value.attr('step'));
+                                if (v > max) {
+                                    v = max;
+                                }
+                                if (v < min) {
+                                    v = min;
+                                }
+                                v = v - v % step;
+                                object[$value.attr('_key')] = v;
+                                $value.val(v);
+                                $value.text(v);
+                                $input.remove();
+                            }
+                            var numeric = '0123456789';
+                            if (e.which == 189) {
+                                if ($(this).val()[0] == '-') {
+                                    $(this).val($(this).val().slice(1));
+                                } else {
+                                    $(this).val('-' + $(this).val());
+                                }
+                                return false;
+                            }
+                            if (e.which == 190 && $(this).val().indexOf('.') != -1) {
+                                return false;
+                            }
+                            if (e.which != 189 && e.which != 190 && numeric.indexOf(String.fromCharCode(e.which)) == -1) {
+                                return false;
+                            }
+
+                        })
+                        .blur(function (e) {
+                            var v = parseFloat($(this).val());
+                            var max = parseFloat($value.attr('maxValue'));
+                            var min = parseFloat($value.attr('minValue'));
+                            var step = parseFloat($value.attr('step'));
+                            if (v > max) {
+                                v = max;
+                            }
+                            if (v < min) {
+                                v = min;
+                            }
+                            v = v - v % step;
+                            object[$value.attr('_key')] = v;
+                            $value.val(toFixedWithoutZeros(v, 3));
+                            $value.text($value.val());
+                            $input.remove();
+                        });
+                });
+            }
+            if (fields[i].slider) {
+                var $slider = new roundSlider({
+                    $parent: $interactive,
+                    radius_big: $value.height() / 2,
+                    radius_small: $value.height() / 8,
+                    start: object[fields[i].key],
+                    min: fields[i].min,
+                    max: fields[i].max,
+                    step: fields[i].step
+                });
+                $slider.focus = function() {
+                    if (typeof($children) !== 'undefined') {
+                        $children.fadeTo(300, 0.5, 0);
+                    }
+                };
+                $slider.blur = function() {
+                    if (typeof($children) !== 'undefined') {
+                        $children.fadeTo(300, 1, 0);
+                    }
+                };
+                $slider.data = $value;
+                $slider.onValueChange = function (new_val) {
+                    object[$(this.data).attr('_key')] = new_val;
+                    var s = toFixedWithoutZeros(new_val, 3);
+                    this.data.val(s);
+                    this.data.text(this.data.val());
+                };
+                $interactive.addClass('slider');
+            }
+            else {
+                $value.attr('colspan', '2');
+                $interactive.remove();
+            }
+        }
+
+        if (ftype == 'Point' || ftype == 'Array') {
+            $interactive.addClass('button');
+            $interactive.attr('_key', fields[i].key);
+            $interactive.text('>');
+            var _myField = fields[i];
+            $interactive.mousedown(function (e) {
+                if (typeof($children) !== 'undefined' &&
+                    ($children.$parent.attr('id') == $(this).attr('id'))) {
+                    $children.remove(500);
+                    $children = undefined;
+                    childIndex--;
+                    return;
+                }
+                if (typeof($children) !== 'undefined') {
+                    $children.remove(500, function() {});
+                    $children = undefined;
+                    childIndex--;
+                }
+                if (typeof($children) === 'undefined') {
+                    var key = $(this).attr('_key');
+                    var $myField = $(this).parents('.field');
+                    var offset = $(this).offset();
+                    offset.top += $(this).height() / 2;
+                    offset.left += $(this).width() / 2;
+                    $children = new infoPanel(offset, $myField, $(this),
+                        $(this).attr('id') + '_' + childIndex, object[key],
+                        toFields(object[key], _myField), z + 1);
+                    childIndex++;
+                }
+            })
+        }
+    }
+    $table.hide(0);
+    $table.show(500);
+
+    var _remove = function (duration, complete) {
+        if (typeof($children) !== 'undefined') {
+            $children.remove(duration / 2, function () {
+                $table.hide(duration / 2, function () {
+                    $(this).remove();
+                });
+                delete this;
+
+            })
+        } else {
+            $table.hide(duration, function () {
+                if (typeof(complete) !== 'undefined') {
+                    complete();
+                }
+                $(this).remove();
+            });
+            delete this;
+        }
+    };
+    this.__defineGetter__('remove', function () {
+        return _remove;
+    });
+
+    this.__defineGetter__('visible', function () {
+        return $($table).is(':visible');
+    });
+
+    var _show = function (duration, direction, complete) {
+        if (typeof($children) !== 'undefined') {
+            if (typeof(direction) !== 'undefined' && direction == -1) {
+                $children.fadeTo(duration, direction, function() {
+                    $table.fadeTo(duration);
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                })
+            } else if (typeof(direction) !== 'undefined' && direction == 1) {
+                $table.fadeTo(duration, function () {
+                    $children.fadeTo(duration, direction);
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                })
+            } else {
+                $table.show(duration, function () {
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                });
+                $children.fadeTo(duration, direction, function () {
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                });
+            }
+        } else {
+            $table.fadeTo(duration, function () {
+                if (typeof(complete) !== 'undefined') {
+                    complete();
+                }
+            });
+        }
+    };
+    this.__defineGetter__('show', function () {
+        return _show;
+    });
+
+    var _hide = function (duration, direction, complete) {
+        if (typeof($children) !== 'undefined') {
+            if (typeof(direction) !== 'undefined' && direction == -1) {
+                $children.hide(duration, direction, function() {
+                    $table.hide(duration);
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                })
+            } else if (typeof(direction) !== 'undefined' && direction == 1) {
+                $table.hide(duration, function () {
+                    $children.hide(duration, direction);
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                })
+            } else {
+                $table.hide(duration, function () {
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                });
+                $children.hide(duration, direction, function () {
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                });
+            }
+        } else {
+            $table.hide(duration, function () {
+                if (typeof(complete) !== 'undefined') {
+                    complete();
+                }
+            });
+        }
+    };
+    this.__defineGetter__('hide', function () {
+        return _hide;
+    });
+
+    var _toggle = function (duration, direction, complete) {
+        if (typeof($children) !== 'undefined') {
+            if (typeof(direction) !== 'undefined' && direction == -1) {
+                $children.toggle(duration, direction, function() {
+                    $table.toggle(duration);
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                })
+            } else if (typeof(direction) !== 'undefined' && direction == 1) {
+                $table.toggle(duration, function () {
+                    $children.toggle(duration, direction);
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                })
+            } else {
+                $table.toggle(duration, function () {
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                });
+                $children.toggle(duration, direction, function () {
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                });
+            }
+        } else {
+            $table.toggle(duration, function () {
+                if (typeof(complete) !== 'undefined') {
+                    complete();
+                }
+            });
+        }
+    };
+    this.__defineGetter__('toggle', function () {
+        return _toggle;
+    });
+    // 1 - parent -> child; -1 - child -> parent
+    var _fadeTo = function (duration, opacity, direction, complete) {
+        if (typeof($children) !== 'undefined') {
+            if (typeof(direction) !== 'undefined' && direction == -1) {
+                $children.fadeTo(duration, opacity, direction, function() {
+                    $table.fadeTo(duration, opacity);
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                })
+            } else if (typeof(direction) !== 'undefined' && direction == 1) {
+                $table.fadeTo(duration, opacity, function () {
+                    $children.fadeTo(duration, opacity, direction);
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                })
+            } else {
+                $table.fadeTo(duration, opacity, function () {
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                });
+                $children.fadeTo(duration, opacity, direction, function () {
+                    if (typeof(complete) !== 'undefined') {
+                        complete();
+                    }
+                });
+            }
+        } else {
+            $table.fadeTo(duration, opacity, function () {
+                if (typeof(complete) !== 'undefined') {
+                    complete();
+                }
+            });
+        }
+    };
+    this.__defineGetter__('fadeTo', function() {
+        return _fadeTo;
+    })
+}

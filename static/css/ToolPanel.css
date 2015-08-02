@@ -1,0 +1,54 @@
+#tools {
+    word-wrap: break-word;
+    white-space: pre-line;
+    padding-top: 5px;
+}
+
+#tools .switcher {
+    position: relative;
+    display: inline-block;
+    border: 3px solid transparent;
+    padding: 0 2px;
+    margin: 3px 0;
+}
+
+#tools .switcher:hover {
+    border-left: 3px solid rgb(153, 204, 255);
+}
+
+#tools .switcher.tool.selected {
+        border-left: 3px solid rgb(153, 204, 255);
+}
+
+#tools .icon {
+    width: 20px;
+    height: 20px;
+}
+
+#tools .box .switcher {
+    right: 0;
+    display: table-cell;
+}
+
+#tools .box .label {
+    display: table-cell;
+    word-wrap: normal;
+    white-space: nowrap;
+}
+
+#tools .box {
+    text-align: left;
+    vertical-align: middle;
+    display: table-row;
+}
+
+#tools .tool-panel-child {
+    position: absolute;
+    white-space: normal;
+    word-wrap: normal;
+    background-color: rgb(46, 49, 58);
+    left: 100%;
+    top: 0;
+    z-index: 1;
+    display: table;
+}

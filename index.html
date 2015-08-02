@@ -1,0 +1,354 @@
+<html>
+<head>
+<script type="text/javascript" src="./static/js/jquery-2.0.2.min.js"></script>
+<script type="text/javascript" src="./static/js/longclick/jquery.longclick.js"></script>
+<script type="text/javascript" src="./static/js/paper/dist/paper-full.js"></script>
+    <link rel="stylesheet" type="text/css" href="./static/css/index.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/ToolPanel.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/infoBox.css">
+
+    <link rel="stylesheet" type="text/css" href="./static/js/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.custom.min.css">
+    <script type="text/javascript" src="./static/js/jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
+
+    <script type="text/paperscript" canvas="canvas" src="./static/js/index.js"></script>
+    <script type="text/javascript" src="./static/js/Utils/ToolPanel.js"></script>
+
+    <script>
+        var COMPLETE_PAPER = false;
+        var currentTool = undefined;
+
+        function changeTool(new_tool) {
+            if (typeof(currentTool) !== 'undefined' && currentTool.hasOwnProperty('remove')) {
+                console.log(currentTool.remove);
+                currentTool.remove();
+            }
+            currentTool = new new_tool();
+        }
+
+        function stub() {
+            currentTool = undefined;
+        }
+
+    </script>
+    <script>
+        $(function() {
+            $("*").attr('unselectable','on').css('MozUserSelect','none');
+            $('*').css({
+                '-moz-user-select': 'none',
+                '-khtml-user-select': 'none',
+                '-webkit-user-select': 'none',
+                'unselectable': 'on',
+                'cursor': 'default'
+            });
+            function resizeIt () {
+                var _width = $(document).width();
+                var _height = $(document).height();
+
+                var $square = $('#main .left.top');
+
+                $square.css({
+                    'height': '13%'
+                });
+                $square.width($square.height());
+
+                var _w = $('.container').width();
+                var _h = $('.container').height();
+                var _padding_width = 1.05 * (_w / 100);
+                $('.container').css('border-spacing', _padding_width);
+
+            }
+            resizeIt();
+            $(window).resize(function () {
+                resizeIt();
+            });
+            var load_timer = setInterval(function () {
+                if (COMPLETE_PAPER) {
+                    clearInterval(load_timer);
+                    var MG = new MathGraph();
+                    ToolPanel($('#tools'), [
+                        {
+                            type: 'tool',
+                            elements: [
+                                {
+                                    label: 'Задать систему координат по базису сохраняя локальные координаты',
+                                    icon0: './static/img/icons/axes_basis.ico',
+                                    icon1: './static/img/icons/axes_basis.ico',
+                                    onChange: function (e) {
+                                        if (e == 1) {
+                                            console.log('Basis');
+                                        } else {
+                                            console.log('!Basis');
+                                        }
+                                    }
+                                },
+                                {
+                                    label: 'Задать систему координат по базису сохраняя глобальные координаты',
+                                    icon0: './static/img/icons/axes_basis.ico',
+                                    icon1: './static/img/icons/axes_basis.ico',
+                                    onChange: function (e) {
+                                        if (e == 1) {
+                                            console.log('Basis');
+                                        } else {
+                                            console.log('!Basis');
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            type: 'tool',
+                            elements: [
+                                {
+                                    label: 'Трансформировать систему координат сохраняя локальные координаты',
+                                    icon0: './static/img/icons/axes_transformer.ico',
+                                    icon1: './static/img/icons/axes_transformer.ico',
+                                    onChange: function (e) {
+                                        if (e == 1) {
+                                            console.log('Trans');
+                                        } else {
+                                            console.log('!Trans')
+                                        }
+                                    }
+                                },
+                                {
+                                    label: 'Трансформировать систему координат сохраняя глобальные координаты',
+                                    icon0: './static/img/icons/axes_transformer.ico',
+                                    icon1: './static/img/icons/axes_transformer.ico',
+                                    onChange: function (e) {
+                                        if (e == 1) {
+                                            changeTool(MG.Affine.Transformer);
+                                        } else {
+                                            changeTool(MG.EmptyTool);
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            type: 'checks',
+                            icon: './static/img/icons/show.ico',
+                            elements: [
+                                {
+                                    label: 'Показать/скрыть систему координат',
+                                    icon0: './static/img/icons/hide.ico',
+                                    icon1: './static/img/icons/show.ico',
+                                    onChange: function (e) {
+                                        console.log('CS - ' + e);
+                                    }
+                                },
+                                {
+                                    label: 'Показать/скрыть сетку',
+                                    icon0: './static/img/icons/hide.ico',
+                                    icon1: './static/img/icons/show.ico',
+                                    onChange: function (e) {
+                                        console.log('Grid - ' + e);
+                                    }
+                                },
+                                {
+                                    label: 'Показать/скрыть насечки',
+                                    icon0: './static/img/icons/hide.ico',
+                                    icon1: './static/img/icons/show.ico',
+                                    onChange: function (e) {
+                                        console.log('Ticks - ' + e);
+                                    }
+                                },
+                                {
+                                    label: 'Показать/скрыть отметки',
+                                    icon0: './static/img/icons/hide.ico',
+                                    icon1: './static/img/icons/show.ico',
+                                    onChange: function (e) {
+                                        console.log('Labels - ' + e);
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            type: 'tool',
+                            elements: [
+                                {
+                                    label: 'Повернуть',
+                                    icon0: './static/img/icons/rotator.png',
+                                    icon1: './static/img/icons/rotator.png',
+                                    onChange: function (e) {
+                                        if (e == 1) {
+                                            changeTool(MG.Rotator);
+                                        } else {
+                                            changeTool(MG.EmptyTool);
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            type: 'tool',
+                            elements: [
+                                {
+                                    label: 'Переместить',
+                                    icon0: './static/img/icons/translator.png',
+                                    icon1: './static/img/icons/translator.png',
+                                    onChange: function (e) {
+                                        if (e == 1) {
+                                            changeTool(MG.Translator);
+                                        } else {
+                                            changeTool(MG.EmptyTool);
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            type: 'tool',
+                            elements: [
+                                {
+                                    label: 'Изменить размер',
+                                    icon0: './static/img/icons/resizer.png',
+                                    icon1: './static/img/icons/resizer.png',
+                                    onChange: function (e) {
+                                        if (e == 1) {
+                                            changeTool(MG.Resizer);
+                                        } else {
+                                            changeTool(MG.EmptyTool);
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            type: 'tool',
+                            elements: [
+                                {
+                                    label: 'Стрелка',
+                                    icon0: './static/img/icons/arrow.png',
+                                    icon1: './static/img/icons/arrow.png',
+                                    onChange: function (e) {
+                                        if (e == 1) {
+                                            changeTool(MG.Arrow.Creator2points);
+                                        } else {
+                                            changeTool(MG.EmptyTool);
+                                        }
+                                    }
+                                },
+                                {
+                                    label: 'Отрезок',
+                                    icon0: './static/img/icons/segment.png',
+                                    icon1: './static/img/icons/segment.png',
+                                    onChange: function (e) {
+//                                        if (e == 1) {
+//                                            changeTool(MG.Segment.Creator2points);
+//                                        } else {
+//                                            changeTool(MG.EmptyTool);
+//                                        }
+                                    }
+                                },
+                                {
+                                    label: 'Прямая',
+                                    icon0: './static/img/icons/straight.png',
+                                    icon1: './static/img/icons/straight.png',
+                                    onChange: function (e) {}
+                                },
+                                {
+                                    label: 'Точка',
+                                    icon0: './static/img/icons/point.png',
+                                    icon1: './static/img/icons/point.png',
+                                    onChange: function (e) {}
+                                }
+                            ]
+                        },
+                        {
+                            type: 'tool',
+                            elements: [
+                                {
+                                    label: 'Многоугольник',
+                                    icon0: './static/img/icons/polygon.ico',
+                                    icon1: './static/img/icons/polygon.ico',
+                                    onChange: function (e) {
+//                                        if (e == 1) {
+//                                            changeTool(MG.Polygon.CreatorNPoints);
+//                                        } else {
+//                                            changeTool(MG.EmptyTool);
+//                                        }
+                                    }
+                                },
+                                {
+                                    label: 'Параллелограм',
+                                    icon0: './static/img/icons/parallelogram.ico',
+                                    icon1: './static/img/icons/parallelogram.ico',
+                                    onChange: function (e) {}
+                                },
+                                {
+                                    label: 'Прямоугольник',
+                                    icon0: './static/img/icons/rectangle.ico',
+                                    icon1: './static/img/icons/rectangle.ico',
+                                    onChange: function (e) {}
+                                },
+                                {
+                                    label: 'Правильный многоугольник',
+                                    icon0: './static/img/icons/regular.png',
+                                    icon1: './static/img/icons/regular.png',
+                                    onChange: function (e) {}
+                                }
+                            ]
+                        },
+                        {
+                            type: 'tool',
+                            elements: [
+                                {
+                                    label: 'Параметрическая кривая',
+                                    icon0: './static/img/icons/curve.ico',
+                                    icon1: './static/img/icons/curve.ico',
+                                    onChange: function (e) {
+                                    }
+                                },
+                                {
+                                    label: 'Окружность',
+                                    icon0: './static/img/icons/circle.png',
+                                    icon1: './static/img/icons/circle.png',
+                                    onChange: function (e) {}
+                                }
+                            ]
+                        }
+                    ]);
+                }
+            }, 1);
+        });
+
+        function createTools() {
+//            console.log('adf');
+
+        }
+    </script>
+</head>
+        <body>
+<table id="main">
+    <tr>
+        <td class="left top">
+
+        </td>
+        <td class="right top">
+            <div id="infoBoxContainer"></div>
+
+            <div class="user"></div>
+
+        </td>
+    </tr>
+    <tr>
+        <td class="left bottom">
+            <div id='tools'></div>
+        </td>
+        <td class="right bottom">
+            <table class='container'>
+                <tr>
+                    <td class="canvas">
+                    	<canvas id="canvas"></canvas>
+                    </td>
+                    <td class="test">
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+        </body>
+</html>

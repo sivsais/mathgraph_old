@@ -1,0 +1,383 @@
+/**
+ * Created with JetBrains WebStorm.
+ * User: Sivsais
+ * Date: 16.02.14
+ * Time: 21:07
+ * To change this template use File | Settings | File Templates.
+ */
+
+function Button(param) {
+    var $new_button = $('<div></div>', {
+        'class': 'button',
+        'name': param.name
+    });
+    $new_button.css({
+        'position': 'relative',
+        'display': 'inline-block',
+        'white-space': 'nowrap',
+        'vertical-align': 'middle'
+    });
+    var $icon = $('<div></div>', {
+        'alt': param.name,
+        'src': param.icon,
+        'class': 'icon'
+    });
+    $icon.appendTo($new_button);
+    $icon.css({
+        'display': 'inline-block',
+        'vertical-align': 'middle',
+        'background': 'url(' + param.icon + ') no-repeat center',
+        'background-size': '100%',
+        'border': '0'
+    });
+    var $label = $('<span></span>', {
+        'class': 'label'
+    });
+    $label.css({
+        'align': 'left',
+        'vertical-align': 'middle'
+    });
+    $new_button.append($label);
+    $label.text(param.name);
+    $label.hide();
+
+    var _labelOn = function () {
+        $new_button.css('display', 'block');
+        $label.show();
+    };
+    this.__defineGetter__('labelOn', function () {
+        return _labelOn;
+    });
+
+    var _labelOff = function () {
+        $new_button.css('display', 'inline-block');
+        $label.hide();
+    };
+    this.__defineGetter__('labelOff', function () {
+        return _labelOff;
+    });
+
+    this.__defineGetter__('$object', function () {
+        return $new_button;
+    });
+
+    this.__defineGetter__('icon', function () {
+        return $icon.attr('src');
+    });
+    this.__defineSetter__('icon', function (p) {
+        $icon.attr('src', p);
+        $icon.css({
+            'background': 'url(' + param.icon + ') no-repeat center'
+        });
+    });
+
+    this.__defineGetter__('name', function () {
+        return $new_button.attr('name');
+    });
+    this.__defineSetter__('name', function (p) {
+        $new_button.attr('name', p);
+        $icon.attr('alt', p);
+        $label.text(p);
+    });
+
+    var _click = function () {};
+    this.__defineGetter__('click', function () {
+        return _click;
+    });
+    this.__defineSetter__('click', function (p) {
+        _click = p;
+    });
+
+    var _me = this;
+    $new_button
+        .mouseenter(function (e) {
+            $(this).addClass('hover');
+        })
+        .mouseleave(function (e) {
+            $(this).removeClass('hover');
+            $(this).removeClass('push');
+        })
+        .mousedown(function (e) {
+            $(this).addClass('push');
+        })
+        .mouseup(function (e) {
+            $(this).removeClass('push');
+        })
+        .click(function (e) {
+            if ($(this).hasClass('longPush')) {
+                $(this).removeClass('longPush');
+            } else {
+                _me.click();
+            }
+        });
+
+    this.__defineGetter__('remove', function () {
+        return function () {
+            $new_button.remove();
+        }
+    });
+
+    this.__defineGetter__('param', function () {
+        return param;
+    });
+
+    this.__defineSetter__('select', function (p) {
+        if (p) {
+            $new_button.addClass('selected');
+            param.func();
+        } else {
+            $new_button.removeClass('selected');
+        }
+    });
+
+    var _selectable = param.selectable;
+    this.__defineGetter__('selectable', function () {
+        return _selectable;
+    })
+}
+
+function GroupButton () {
+    var $gb = $('<div></div>');
+    $gb.css({
+        'border': '0',
+        'background': 'transparent',
+        'padding': '-1px',
+        'margin': '0',
+        'position': 'relative',
+        'display': 'inline-block',
+        'white-space': 'nowrap',
+        'vertical-align': 'middle'
+    });
+
+    this.__defineGetter__('$object', function () {
+        return $gb;
+    });
+
+    var _currentButton = undefined;
+    this.__defineGetter__('current', function () {
+        return _currentButton;
+    });
+    this.__defineSetter__('current', function (p) {
+        if (typeof(_currentButton) !== 'undefined') {
+            _currentButton.$object.remove();
+        }
+        $gb.append(p.$object);
+        _currentButton = p;
+        if (_selected) {
+            _currentButton.select = true;
+        }
+    });
+
+    var _longPush = function () {};
+    this.__defineGetter__('longPush', function () {
+        return _longPush;
+    });
+    this.__defineSetter__('longPush', function (p) {
+        _longPush = p;
+    });
+
+    var long_timer = undefined;
+    var _me = this;
+    var $c;
+    $gb
+        .mouseenter(function (e) {
+            var corner_size = 5;
+            $c = $('<div></div>');
+            $c.css({
+                'position': 'absolute',
+                'width': '0',
+                'height': '0',
+                'background': 'transparent',
+                'border-bottom': corner_size + 'px solid rgb(153, 204, 255)',
+                'border-left': corner_size + 'px solid transparent',
+                'border-right': corner_size + 'px solid rgb(153, 204, 255)',
+                'opacity': 0.4
+            });
+
+//            $c.appendTo(_currentButton.$object);
+//            var _offset = $(this).offset();
+//            _offset.left += $(this).width() - corner_size;
+//            _offset.top += $(this).height() - corner_size;
+//            $c.offset(_offset);
+        })
+        .mouseleave(function (e) {
+            if (typeof($c) !== 'undefined') {
+                $c.remove();
+                $c = undefined;
+            }
+            if (typeof(long_timer) !== 'undefined') {
+                clearInterval(long_timer);
+                long_timer = undefined;
+            }
+            _currentButton.$object.removeClass('longPush');
+//            $(this).uncorner();
+        })
+        .mousedown(function (e) {
+            _currentButton.$object.removeClass('longPush');
+            if (typeof(long_timer) !== 'undefined') {
+                clearInterval(long_timer);
+                long_timer = undefined;
+            }
+            long_timer = setInterval(function () {
+                clearInterval(long_timer);
+                long_timer = undefined;
+                _currentButton.$object.removeClass('push');
+                _currentButton.$object.addClass('longPush');
+
+                _me.longPush();
+
+            }, 500);
+            return false;
+        })
+        .mouseup(function (e) {
+            if (typeof(long_timer) !== 'undefined') {
+                clearInterval(long_timer);
+                long_timer = undefined;
+            }
+            _currentButton.$object.removeClass('push');
+        })
+        .click(function (e) {
+            if (_currentButton.$object.hasClass('longPush')) {
+                _currentButton.$object.removeClass('longPush');
+            }
+        });
+
+    var _selected = false;
+    this.__defineSetter__('select', function (p) {
+        _selected = p;
+        _currentButton.select = p;
+    })
+}
+
+function ToolPanel($container) {
+    $container.css({
+        'word-wrap': 'break-word',
+        'class': 'toolPanel'
+    });
+
+    var _buttons = [];
+
+    var child = undefined;
+    var $table = undefined;
+    var _labeled = false;
+    var _me = this;
+
+    var _addButton = function(button) {
+        _buttons.push(new Button(button));
+        var nb = _buttons[_buttons.length - 1];
+        nb.id = _buttons.length - 1;
+        $container.append(nb.$object);
+        nb.click = function () {
+            _select(this);
+            };
+        if (_labeled) {
+            nb.labelOn();
+        }
+        return nb;
+    };
+    this.__defineGetter__('addButton', function () {
+        return _addButton;
+    });
+
+    var _closeChild = function () {
+        if (typeof($table) !== 'undefined') {
+            $table.remove();
+            $table = undefined;
+            child = undefined;
+        }
+    };
+
+    var _addGroup = function(buttons) {
+
+        var group_button = new GroupButton();
+        _buttons.push(group_button);
+
+        group_button.current = this.addButton(buttons[0]);
+
+        $container.append(group_button.$object);
+        group_button.longPush = function () {
+            if (typeof($table) === 'undefined') {
+                this.select = true;
+                $table = $('<div></div>', {});
+
+                $table.css({
+                    'position': 'relative',
+                    'border': '1px solid rgb(153, 204, 255)',
+                    'z-index': '1'
+                });
+                $table.appendTo($container);
+                child = new ToolPanel($table);
+                for (var i in buttons) {
+                    if (!buttons.hasOwnProperty(i)) {
+                        continue;
+                    }
+                    var tmp = child.addButton(buttons[i]);
+                    tmp.click = function () {
+                        group_button.current.remove();
+                        group_button.current = _me.addButton(this.param);
+                        _closeChild();
+                    };
+                }
+                child.labelOn();
+                var _offset = this.$object.offset();
+                _offset.left += this.$object.width();
+                $table.offset(_offset);
+
+                $table.mousedown(function (e) {
+                    e.stopPropagation();
+                });
+                $(document).mousedown(function (e) {
+                    _closeChild();
+                });
+            } else {
+                _closeChild();
+            }
+        };
+    };
+    this.__defineGetter__('addGroup', function () {
+        return _addGroup;
+    });
+
+    var _labelOn = function () {
+        for (var i in _buttons) {
+            if (!_buttons.hasOwnProperty(i)) {
+                continue;
+            }
+            _buttons[i].labelOn();
+        }
+        _labeled = true;
+    };
+    this.__defineGetter__('labelOn', function () {
+        return _labelOn;
+    });
+
+    var _labelOff = function () {
+        for (var i in _buttons) {
+            if (!_buttons.hasOwnProperty(i)) {
+                continue;
+            }
+            _buttons[i].labelOff();
+        }
+        _labeled = false;
+    };
+    this.__defineGetter__('labelOff', function () {
+        return _labelOff;
+    });
+
+    this.__defineGetter__('last', function () {
+        return _buttons[_buttons.length - 1];
+    });
+
+    var _select = function (btn) {
+        if (btn.selectable) {
+            for (var i in _buttons) {
+                if (!_buttons.hasOwnProperty(i)) {
+                    continue;
+                }
+                _buttons[i].select = false;
+            }
+            btn.select = true;
+        }
+    }
+
+}

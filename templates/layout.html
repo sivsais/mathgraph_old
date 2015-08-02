@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <script type="text/javascript" src="/static/js/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="/static/js/longclick/jquery.longclick.js"></script>
+    <script type="text/javascript" src="/static/js/paper/dist/paper-full.js"></script>
+    <script type = text/javascript>
+        var $SCRIPT_ROOT = {{ request.script_root | tojson | safe }};
+    </script>
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+{% block body %}
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src = '../static/js/Utils/ToolPanel.js'></script>
+    <script src = '../static/js/jquery-2.0.2.min.js'></script>
+    <script>
+        $(function () {ToolPanel($('body'), [
+            {
+                type: 'tool',
+                elements: [
+                    {
+                        label: 'Бразилия',
+                        icon0: 'http://icons.iconarchive.com/icons/custom-icon-design/2014-world-cup-flags/24/Brazil-icon.png',
+                        icon1: 'http://icons.iconarchive.com/icons/custom-icon-design/2014-world-cup-flags/24/Brazil-icon.png',
+                        onChange: function (e) {
+                            if (e == 1) {
+                                console.log('Вы выбрали Бразилию');
+                            } else {
+                                console.log('Вы отказались от Бразилии');
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                type: 'tool',
+                elements: [
+                    {
+                        label: 'Испания',
+                        icon0: 'http://icons.iconarchive.com/icons/custom-icon-design/2014-world-cup-flags/24/Spain-icon.png',
+                        icon1: 'http://icons.iconarchive.com/icons/custom-icon-design/2014-world-cup-flags/24/Spain-icon.png',
+                        onChange: function (e) {
+                            if (e == 1) {
+                                console.log('YEspana');
+                            } else {
+                                console.log('NoEspana');
+                            }
+                        }
+                    },
+                    {
+                        label: 'Португалия',
+                        icon0: 'http://icons.iconarchive.com/icons/custom-icon-design/2014-world-cup-flags/24/Portugal-icon.png',
+                        icon1: 'http://icons.iconarchive.com/icons/custom-icon-design/2014-world-cup-flags/24/Portugal-icon.png',
+                        onChange: function (e) {
+                            if (e == 1) {
+                                console.log('CR7');
+                            } else {
+                                console.log('Cristiano')
+                            }
+                        }
+                    },
+                    {
+                        label: 'Аргентина',
+                        icon0: 'http://icons.iconarchive.com/icons/custom-icon-design/2014-world-cup-flags/24/Argentina-icon.png',
+                        icon1: 'http://icons.iconarchive.com/icons/custom-icon-design/2014-world-cup-flags/24/Argentina-icon.png',
+                        onChange: function (e) {
+                            if (e == 1) {
+                                console.log('Lionel Messi');
+                            } else {
+                                console.log('Zabaleta');
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                type: 'checks',
+                icon: 'http://icons.iconarchive.com/icons/danrabbit/elementary/24/Apps-checkbox-icon.png',
+                elements: [
+                    {
+                        label: 'Бразилия',
+                        icon0: 'http://icons.iconarchive.com/icons/janik-baumgartner/woocons/32/Checkbox-Empty-icon.png',
+                        icon1: 'http://icons.iconarchive.com/icons/janik-baumgartner/woocons/32/Checkbox-Full-icon.png',
+                        onChange: function (e) {
+                            if (e == 1) {
+                                console.log('Brazil');
+                            }
+                        }
+                    },
+                    {
+                        label: 'Аргентина',
+                        icon0: 'http://icons.iconarchive.com/icons/janik-baumgartner/woocons/32/Checkbox-Empty-icon.png',
+                        icon1: 'http://icons.iconarchive.com/icons/janik-baumgartner/woocons/32/Checkbox-Full-icon.png',
+                        onChange: function (e) {
+                            if (e == 1) {
+                                console.log('Argentina');
+                            }
+                        }
+                    },
+                    {
+                        label: 'Уругвай',
+                        icon0: 'http://icons.iconarchive.com/icons/janik-baumgartner/woocons/32/Checkbox-Empty-icon.png',
+                        icon1: 'http://icons.iconarchive.com/icons/janik-baumgartner/woocons/32/Checkbox-Full-icon.png',
+                        onChange: function (e) {
+                            if (e == 1) {
+                                console.log('Uruguay');
+                            }
+                        }
+                    }
+                ]
+            }
+        ]);
+
+
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

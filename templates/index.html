@@ -1,0 +1,317 @@
+{% extends "layout.html" %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/toolbar.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/infoBox.css">
+
+    <link rel="stylesheet" type="text/css" href="/static/js/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.custom.min.css">
+    <script type="text/javascript" src="/static/js/jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
+
+    <script type="text/paperscript" canvas="canvas" src="/static/js/index.js"></script>
+    <script type="text/javascript" src="/static/js/Utils/toolbar.js"></script>
+    <script type="text/javascript" src="/static/js/bindFirst/release/jquery.bind-first-0.2.3.min.js"></script>
+    <script type="text/javascript" src="/static/js/longpress/jquery.longpress.js"></script>
+
+    <script>
+        var COMPLETE_PAPER = false;
+        var currentTool = undefined;
+
+        function changeTool(new_tool) {
+            if (typeof(currentTool) !== 'undefined' && currentTool.hasOwnProperty('remove')) {
+                currentTool.remove();
+            }
+            if (true) {
+                currentTool = new new_tool();
+            }
+        }
+
+        function stub() {
+            currentTool = undefined;
+        }
+
+    </script>
+    <script>
+        (function ($) {
+            var methods = ['addClass', 'toggleClass', 'removeClass'];
+
+            $.map(methods, function (method) {
+                // store the original handler function
+                var originalMethod = $.fn[method];
+
+                $.fn[method] = function () {
+                    // execute the original hanlder
+                    var oldClass = this[0].className;
+                    var result = originalMethod.apply(this, arguments);
+                    var newClass = this[0].className;
+
+                    // trigger the custom event
+                    this.trigger(method, [oldClass, newClass]);
+
+                    // return the original handler
+                    return result;
+                };
+            });
+        })(this.jQuery || this.Zepto);
+
+        $(function() {
+
+            $('*').bind('contextmenu', function (e) {
+                e.preventDefault();
+                return false;
+            });
+
+            $("*").attr('unselectable','on').css('MozUserSelect','none');
+            $('*').css({
+                '-moz-user-select': 'none',
+                '-khtml-user-select': 'none',
+                '-webkit-user-select': 'none',
+                'unselectable': 'on',
+                'cursor': 'default'
+            });
+            function resizeIt () {
+                var _width = $(document).width();
+                var _height = $(document).height();
+
+                var $square = $('#main .left.top');
+
+                $square.css({
+                    'height': '13%'
+                });
+                $square.width($square.height());
+
+                var _w = $('.container').width();
+                var _h = $('.container').height();
+                var _padding_width = 1.05 * (_w / 100);
+                $('.container').css('border-spacing', _padding_width);
+
+
+                var $infoBox = $('#infoBoxContainer');
+                $infoBox.outerWidth($('.right.top').width() * 0.6);
+                $infoBox.outerHeight($('.right.top').height());
+                $infoBox.position({left: 0, top:0});
+
+            }
+            resizeIt();
+            $(window).resize(function () {
+                resizeIt();
+            });
+
+            var load_timer = setInterval(function () {
+                if (COMPLETE_PAPER) {
+                    clearInterval(load_timer);
+                    var _tb = new Toolbar($('#toolbar'));
+                    var MG = new MathGraph();
+                    $('#segment').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Segment.Creator2points);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#arrow').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Arrow.Creator2points);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#straight').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Straight.Creator2points);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#curve').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Curve.CreatorParametricManual);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#circle').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Circle.Creator2points);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#implicit').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Curve.CreatorImplicitManual);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#rotator').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Rotator);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#translator').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Translator);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#resizer').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Resizer);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                    $('#axes_transformer').bind('toggleClass removeClass', function () {
+                        if ($(this).hasClass('selected')) {
+                            changeTool(MG.Affine.Transformer);
+                        } else {
+                            changeTool(MG.EmptyTool);
+                        }
+                    });
+                }
+            }, 1);
+        });
+
+        function createTools() {
+//            console.log('adf');
+
+        }
+    </script>
+{% endblock %}
+{% block body %}
+<table id="main">
+    <tr>
+        <td class="left top">
+
+        </td>
+        <td class="right top">
+            <div id="infoBoxContainer"></div>
+
+            <div class="user"></div>
+
+        </td>
+    </tr>
+    <tr>
+        <td class="left bottom">
+
+            <div id='toolbar'>
+                <div class='item button' id='axes_basis'>
+                    <div class='icon'>
+                        ./static/img/icons/axes_basis.ico
+                    </div>
+                </div>
+                <div class='item button' id='axes_transformer'>
+                    <div class='icon'>
+                        ./static/img/icons/axes_transformer.ico
+                    </div>
+                </div>
+                <div class='item checkbox-group visibility'>
+                    <div class='item button'>
+                        <div class='icon'>
+                            ./static/img/icons/show.ico
+                        </div>
+                    </div>
+                    <div class='child'>
+                        <div class='item checkbox checked' id='axes'>
+                            <div class='label'> Показать/скрыть оси координат </div>
+                            <div class='icon checked'>./static/img/icons/show.ico</div>
+                            <div class='icon unchecked'>./static/img/icons/hide.ico</div>
+                        </div>
+                        <div class='item checkbox checked' id='grid'>
+                            <div class='label'> Показать/скрыть сетку </div>
+                            <div class='icon checked'>./static/img/icons/show.ico</div>
+                            <div class='icon unchecked'>./static/img/icons/hide.ico</div>
+                        </div>
+                        <div class='item checkbox checked' id='ticks'>
+                            <div class='label'> Показать/скрыть отметки </div>
+                            <div class='icon checked'>./static/img/icons/show.ico</div>
+                            <div class='icon unchecked'>./static/img/icons/hide.ico</div>
+                        </div>
+                        <div class='item checkbox checked' id='labels'>
+                            <div class='label'> Показать/скрыть подписи </div>
+                            <div class='icon checked'>./static/img/icons/show.ico</div>
+                            <div class='icon unchecked'>./static/img/icons/hide.ico</div>
+                        </div>
+                    </div>
+                </div>
+                <div class='item button' id='rotator'>
+                    <div class='icon'>
+                        ./static/img/icons/rotator.png
+                    </div>
+                </div>
+                <div class='item button' id='translator'>
+                    <div class='icon'>
+                        ./static/img/icons/translator.png
+                    </div>
+                </div>
+                <div class='item button' id='resizer'>
+                    <div class='icon'>
+                        ./static/img/icons/resizer.png
+                    </div>
+                </div>
+                <div class='item button' id='arrow'>
+                    <div class='icon'>
+                        ./static/img/icons/arrow.png
+                    </div>
+                </div>
+                <div class='item button' id='segment'>
+                    <div class='icon'>
+                        ./static/img/icons/segment.png
+                    </div>
+                </div>
+                <div class='item button' id='straight'>
+                    <div class='icon'>
+                        ./static/img/icons/straight.png
+                    </div>
+                </div>
+                <div class='item button' id='curve'>
+                    <div class='icon'>
+                        ./static/img/icons/curve.ico
+                    </div>
+                </div>
+                <div class='item button' id='implicit'>
+                    <div class='icon'>
+                        ./static/img/icons/implicit.ico
+                    </div>
+                </div>
+                <div class='item button' id='circle'>
+                    <div class='icon'>
+                        ./static/img/icons/circle.png
+                    </div>
+                </div>
+                <!--<div class='item button' id='polygon'>-->
+                    <!--<div class='icon'>-->
+                        <!--./static/img/icons/polygon.ico-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class='item button' id='regular'>-->
+                    <!--<div class='icon'>-->
+                        <!--./static/img/icons/regular.png-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class='item button' id='parallelogram'>-->
+                    <!--<div class='icon'>-->
+                        <!--./static/img/icons/parallelogram.ico-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+        </td>
+        <td class="right bottom">
+            <table class='container'>
+                <tr>
+                    <td class="canvas">
+                    	<canvas id="canvas"></canvas>
+                    </td>
+                    <td class="test">
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

@@ -1,0 +1,163 @@
+#infoBoxContainer .infoBox-wrapper {
+    height: 100%;
+    overflow-x: auto;
+}
+
+#infoBoxContainer .infoBox-title {
+    border: 1px solid black;
+}
+
+#infoBoxContainer .infoBox-close {
+    display: inline-block;
+    white-space: nowrap;
+    height: 100%;
+    float: right;
+    margin: 0 5px;
+}
+
+#infoBoxContainer .infoBox-fold {
+    display: inline-block;
+    white-space: nowrap;
+    height: 100%;
+    float: right;
+    margin: 0 5px;
+}
+
+#infoBoxContainer .infoBox-wrapper .infoBox-table {
+    table-layout: fixed;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+#infoBoxContainer .infoBox-wrapper .infoBox-table .field {
+    /*border: 1px solid green;*/
+    display: table;
+    white-space: nowrap;
+    height: 80%;
+    margin: 0 10px;
+    text-align: center;
+    position: relative;
+}
+
+#infoBoxContainer .infoBox-wrapper .infoBox-table .field .value {
+    display: table-cell;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0 10px;
+    border: 1px solid red;
+    min-width: 150px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#infoBoxContainer .infoBox-wrapper .infoBox-table .field .key {
+    display: table-cell;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0 10px;
+    border: 1px solid blue;
+    min-width: 100px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#infoBoxContainer .infoBox-wrapper .infoBox-table .field .text {
+    text-align: center;
+    background-color: rgb(46, 49, 58);
+    color: white;
+}
+
+#infoBoxContainer .infoBox-wrapper .infoBox-table .field .spinner {
+    text-align: center;
+    background-color: rgb(46, 49, 58);
+    color: white;
+}
+
+.infoBox-child {
+    width: 27%;
+    z-index: 100;
+    background-color: rgb(46, 49, 58);
+    color: white;
+    border: 2px solid white;
+    padding: 10px;
+}
+
+.infoBox-child .infoBox-wrapper {
+    height: 100%;
+    overflow-x: auto;
+}
+
+.infoBox-child .infoBox-title {
+    border: 1px solid black;
+    height: 10%;
+}
+
+.infoBox-child .infoBox-close {
+    display: inline-block;
+    white-space: nowrap;
+    height: 100%;
+    float: right;
+    margin: 0 5px;
+}
+
+.infoBox-child .infoBox-fold {
+    display: inline-block;
+    white-space: nowrap;
+    height: 100%;
+    float: right;
+    margin: 0 5px;
+}
+
+.infoBox-child .infoBox-wrapper .infoBox-table {
+    table-layout: fixed;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+.infoBox-child .infoBox-wrapper .infoBox-table .field {
+    /*border: 1px solid green;*/
+    display: table;
+    white-space: nowrap;
+    height: 80%;
+    margin: 0 10px;
+    text-align: center;
+    position: relative;
+}
+
+.infoBox-child .infoBox-wrapper .infoBox-table .field .value {
+    display: table-cell;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0 10px;
+    border: 1px solid red;
+    min-width: 150px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.infoBox-child .infoBox-wrapper .infoBox-table .field .key {
+    display: table-cell;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0 10px;
+    border: 1px solid blue;
+    min-width: 100px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.infoBox-child .infoBox-wrapper .infoBox-table .field .text {
+    text-align: center;
+    background-color: rgb(46, 49, 58);
+    color: white;
+}
+
+.infoBox-child .infoBox-wrapper .infoBox-table .field .spinner {
+    text-align: center;
+    background-color: rgb(46, 49, 58);
+    color: white;
+}

@@ -1,0 +1,167 @@
+html {
+    background-color: rgb(33, 34, 41);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    border-spacing: 0;
+    font: 10pt verdana;
+    color: white;
+    font-style: normal;
+}
+
+html {
+    padding: 2.01% 10.96%;
+}
+
+body {
+    width: 99%;
+    height: 99%;
+}
+
+#main {
+    position: absolute;
+    width: 78.08%;
+    height: 91.96%;
+    border-collapse: collapse;
+}
+
+#main .left.top {
+    background-color: rgb(153, 204, 255);
+}
+
+#main .right.top {
+    background-color: white;
+}
+
+#main .left.bottom {
+    background-color: rgb(46, 49, 58);
+    vertical-align: top;
+}
+
+#main .right.bottom {
+    background-color: rgb(170, 170, 170);
+}
+
+#main .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-collapse: separate;
+}
+
+#main .container .canvas {
+    width: 69.7%;
+    height: 100%;
+    background-color: rgb(133, 133, 133);
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+#main .container .test {
+    width: 28%;
+    height: 100%;
+    background-color: rgb(133, 133, 133);
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+#main .right.top .user{
+    width: 42.3%;
+    height: 100%;
+    background-image: url("../img/user.jpg");
+    background-size: 100% 100%;
+    float: right;
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(200, 200, 200);
+    z-index: -1;
+}
+
+#infoBoxContainer {
+    position: absolute;
+    z-index: 10;
+    background-color: rgb(46, 49, 58);
+    /*border: 2px solid transparent;*/
+    padding: 0;
+    margin: 0;
+}
+
+.prompt {
+    width: 50%;
+    height: 50%;
+    left: 25%;
+    top: 25%;
+    z-index: 1000;
+    position: absolute;
+    padding: 50px;
+    border: 5px inset black;
+    background-color: rgb(46, 49, 58);
+}
+
+.prompt table {
+    width: 100%;
+}
+
+.prompt table td {
+    border-bottom: 1px solid black;
+}
+
+.prompt table tr td {
+    padding: 7px 10px;
+}
+
+.prompt table tr td:first-child {
+    text-align: right;
+}
+
+.prompt table tr td:last-child {
+    text-align: left;
+}
+
+
+.prompt input {
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+.prompt .params caption {
+    text-align: left;
+}
+
+.prompt .params {
+    width: 100%;
+}
+
+.prompt .params tr td{
+    padding: 5px;
+}
+
+.prompt .params tr td input {
+    height: 25px;
+}
+
+.prompt .Ok {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100px;
+    height: 25px;
+    margin: 5px;
+    background-color: grey;
+}
+
+.prompt .Cancel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100px;
+    height: 25px;
+    margin: 5px;
+    background-color: grey;
+}
